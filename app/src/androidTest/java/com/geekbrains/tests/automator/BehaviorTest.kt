@@ -111,7 +111,7 @@ class BehaviorTest {
 
     //Убеждаемся, что после поиска в DetailsScreen правильное число записей
     @Test
-    fun test_SearchAndOpenDetailsScreenCheck() {
+    fun test_SearchAndOpenDetailsScreenCheckIncDec() {
         val editText = uiDevice.findObject(By.res(packageName, "searchEditText"))
         editText.text = "zozo"
         uiDevice.findObject(By.res(packageName, "searchButton")).click()
@@ -122,6 +122,12 @@ class BehaviorTest {
                 Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
                 TIMEOUT
             )
+        Assert.assertEquals(changedText.text, "Number of results: 42")
+
+        uiDevice.findObject(By.res(packageName, "decrementButton")).click()
+        Assert.assertEquals(changedText.text, "Number of results: 41")
+
+        uiDevice.findObject(By.res(packageName, "incrementButton")).click()
         Assert.assertEquals(changedText.text, "Number of results: 42")
     }
 
