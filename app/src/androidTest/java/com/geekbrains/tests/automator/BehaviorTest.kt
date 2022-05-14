@@ -98,7 +98,7 @@ class BehaviorTest {
         //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
         val changedText =
             uiDevice.wait(
-                Until.findObject(By.res(packageName, "totalCountTextView")),
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
                 TIMEOUT
             )
         //Убеждаемся, что поле видно и содержит предполагаемый текст.
@@ -107,6 +107,22 @@ class BehaviorTest {
         //Чтобы проверить отображение определенного количества репозиториев,
         //вам в одном и том же методе нужно отправить запрос на сервер и открыть DetailsScreen.
         Assert.assertEquals(changedText.text, "Number of results: 0")
+    }
+
+    //Убеждаемся, что после поиска в DetailsScreen правильное число записей
+    @Test
+    fun test_SearchAndOpenDetailsScreenCheck() {
+        val editText = uiDevice.findObject(By.res(packageName, "searchEditText"))
+        editText.text = "zozo"
+        uiDevice.findObject(By.res(packageName, "searchButton")).click()
+        uiDevice.findObject(By.res(packageName, "toDetailsActivityButton")).click()
+
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
+                TIMEOUT
+            )
+        Assert.assertEquals(changedText.text, "Number of results: 42")
     }
 
     companion object {
