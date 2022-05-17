@@ -66,9 +66,8 @@ class BehaviorTest {
         val editText = uiDevice.findObject(By.res(packageName, "searchEditText"))
         //Устанавливаем значение
         editText.text = "UiAutomator"
-        //Отправляем запрос через Espresso
-        Espresso.onView(ViewMatchers.withId(R.id.searchEditText))
-            .perform(ViewActions.pressImeActionButton())
+
+        uiDevice.findObject(By.res(packageName, "searchButton")).click()
 
         //Ожидаем конкретного события: появления текстового поля totalCountTextView.
         //Это будет означать, что сервер вернул ответ с какими-то данными, то есть запрос отработал.
@@ -99,7 +98,7 @@ class BehaviorTest {
         //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
         val changedText =
             uiDevice.wait(
-                Until.findObject(By.res(packageName, "totalCountTextView")),
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
                 TIMEOUT
             )
         //Убеждаемся, что поле видно и содержит предполагаемый текст.
@@ -108,6 +107,28 @@ class BehaviorTest {
         //Чтобы проверить отображение определенного количества репозиториев,
         //вам в одном и том же методе нужно отправить запрос на сервер и открыть DetailsScreen.
         Assert.assertEquals(changedText.text, "Number of results: 0")
+    }
+
+    //Убеждаемся, что после поиска в DetailsScreen правильное число записей
+    @Test
+    fun test_SearchAndOpenDetailsScreenCheckIncDec() {
+        val editText = uiDevice.findObject(By.res(packageName, "searchEditText"))
+        editText.text = "zozo"
+        uiDevice.findObject(By.res(packageName, "searchButton")).click()
+        uiDevice.findObject(By.res(packageName, "toDetailsActivityButton")).click()
+
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
+                TIMEOUT
+            )
+        Assert.assertEquals(changedText.text, "Number of results: 42")
+
+        uiDevice.findObject(By.res(packageName, "decrementButton")).click()
+        Assert.assertEquals(changedText.text, "Number of results: 41")
+
+        uiDevice.findObject(By.res(packageName, "incrementButton")).click()
+        Assert.assertEquals(changedText.text, "Number of results: 42")
     }
 
     companion object {
